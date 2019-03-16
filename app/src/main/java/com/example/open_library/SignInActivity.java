@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.open_library.dialogs.BookDetailsDialog;
 import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +46,9 @@ public class SignInActivity extends AppCompatActivity {
         passwordEdit = findViewById(R.id.passwordEditText);
 
         mAuth = FirebaseAuth.getInstance();
+
+        BookDetailsDialog dialog = new BookDetailsDialog(this);
+        dialog.show();
 
     }
 
