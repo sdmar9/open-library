@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.open_library.Fragments.SearchAllFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class ShelfFragment extends Fragment {
@@ -57,6 +59,15 @@ public class ShelfFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_shelf, container, false);
         addBookButton = view.findViewById(R.id.addBookButton);
+        Button getStuff = view.findViewById(R.id.getStuffButton);
+
+        getStuff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                ((HomeActivity)getActivity()).read(user.getUid());
+            }
+        });
 
         addBookButton.setOnClickListener(new View.OnClickListener() {
             @Override

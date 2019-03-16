@@ -8,10 +8,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.open_library.dialogs.BookDialogFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -22,12 +26,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements BookDialogFragment.NoticeDialogListener {
 
     private final String TAG = "HOME_ACTIVITY_DEBUG";
     private FirebaseFirestore mDB = FirebaseFirestore.getInstance();
 
     private TextView mTextMessage;
+    public Book dialogBook;
 
     private HomeFragment homeFragment;
     private ShelfFragment shelfFragment;
@@ -67,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -76,6 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         pileFragment = new PileFragment();
         requestFragment = new RequestFragment();
         profileFragment = new ProfileFragment();
+
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.base_frame, homeFragment, "homeFragment")
@@ -110,6 +117,7 @@ public class HomeActivity extends AppCompatActivity {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Log.d(TAG, "onComplete: READ DATA");
                 ArrayList<HashMap> data = new ArrayList<HashMap>();
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
@@ -127,6 +135,10 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-
-
+    @Override
+    public void onDialogPositiveClick(String isbn) {
+        Log.d("DiagTag", "ISBN: " + isbn);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        addBook(user.getUid(), isbn, "None");
+    }
 }
