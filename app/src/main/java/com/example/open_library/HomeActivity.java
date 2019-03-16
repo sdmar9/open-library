@@ -111,8 +111,10 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 .commit();
 
 //        getClosestUsers();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        requestBook(user.getUid(), "7LzdkOLX3zeKuzNi4uwt");
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        requestBook(user.getUid(), "E77jqepc8nmdUAXxh4Uo");
+//        shareBook("7LzdkOLX3zeKuzNi4uwt");
+        getRequests();
     }
 
 
@@ -170,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         count = 0;
         for (String user_id: user_ids) {
             Log.d(TAG, "getClosestBooks: " + user_id);
-            Query query = mDB.collection("user_books").whereEqualTo("uid", user_id);
+            Query query = mDB.collection("user_books").whereEqualTo("uid", user_id).whereEqualTo("state", "available");
             query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -295,35 +297,21 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 Log.d(TAG, "Data not saved");
             }
         });
-
-        mDB.collection("request")
-                .whereEqualTo("bookId", bookId)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        for (QueryDocumentSnapshot doc : value) {
-                            Log.d(TAG, "onEvent: " + doc.getString("user_id"));
-                        }
-                    }
-                });
     }
 
-    public void changeState(String isbn, String user_id, final String state) {
-        Query query = mDB.collection("user_books").whereEqualTo("isbn", isbn).whereEqualTo("user_id", user_id);
+    public void changeState(String isbn, String user_id, final String state, final int numberOfDays) {
+        Log.d(TAG, "changeState: called. Uid - " + user_id + " isbn - " + isbn);
+        Query query = mDB.collection("user_books").whereEqualTo("isbn", isbn).whereEqualTo("uid", user_id);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    Log.d(TAG, "isSuccessful()");
                     for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
                         Log.d(TAG, documentSnapshot.getId());
                         Map<String, Object> book = new HashMap<>();
                         book.put("state", state);
+                        book.put("deadline", numberOfDays);
 
                         mDB.collection("user_books").document(documentSnapshot.getId()).update(book).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -388,14 +376,6 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         addBook(user.getUid(), isbn, "None");
     }
-
-//    public interface ReadCompleteListener {
-//        void onGetBooksk(ArrayList<Book> books);
-////        void onDialogNegativeClick(int num);
-//    }
-//
-//    // Use this instance of the interface to deliver action events
-//    ReadCompleteListener listener;
 
 
 
@@ -493,9 +473,13 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                         description = volumeInfo.getString("description");
 
                         Book newBook = new Book(isbn,title,authors,thumbnailUrl,description,new LatLng(0,0));
-                        books.add(newBook);
-                        shelfFragment.adapter.books = books;
-                        shelfFragment.adapter.notifyDataSetChanged();
+                        if (!isInBooks(newBook)) {
+                            books.add(newBook);
+                            shelfFragment.adapter.books = books;
+                            shelfFragment.adapter.notifyDataSetChanged();
+                        }
+//                        Log.d(TAG, "onPostExecute: InBooks - " + isInBooks(newBook));
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -509,6 +493,18 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         }
 
 
+    }
+
+
+    private boolean isInBooks(Book book) {
+        int N = books.size();
+        for (int i = 0; i<N; i++) {
+            Book currentBook = books.get(i);
+            if (currentBook.getIsbn().equals(book.getIsbn())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

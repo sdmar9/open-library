@@ -53,5 +53,7 @@ public class Book {
         this.state = state;
     }
 
-
+    public String getState() {
+        return state;
+    }
 }

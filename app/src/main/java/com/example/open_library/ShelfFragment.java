@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.open_library.Adapters.ShelfAdapter;
 import com.example.open_library.Fragments.SearchAllFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +24,7 @@ public class ShelfFragment extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    RecyclerAdapter adapter;
+    ShelfAdapter adapter;
 
     private Button addBookButton;
     private SearchAllFragment searchFragment;
@@ -60,7 +61,7 @@ public class ShelfFragment extends Fragment {
         }
 
         fm = getFragmentManager();
-        adapter = new RecyclerAdapter(getContext(), fm);
+        adapter = new ShelfAdapter(getContext(), fm);
 
         searchFragment = new SearchAllFragment();
     }
@@ -79,13 +80,8 @@ public class ShelfFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        getStuff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                ((HomeActivity)getActivity()).read(user.getUid());
-            }
-        });
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        ((HomeActivity)getActivity()).read(user.getUid());
 
         addBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,5 +91,13 @@ public class ShelfFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        ((HomeActivity)getActivity()).read(user.getUid());
     }
 }
