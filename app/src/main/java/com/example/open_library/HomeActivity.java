@@ -4,12 +4,28 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeActivity extends AppCompatActivity {
+
+    private final String TAG = "HOME_ACTIVITY_DEBUG";
+    private FirebaseFirestore mDB = FirebaseFirestore.getInstance();
 
     private TextView mTextMessage;
 
@@ -69,14 +85,46 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public void addBook(String uid, String isbn, String state) {
+        Map<String, Object> book = new HashMap<>();
+        book.put("uid", uid);
+        book.put("isbn", isbn);
+        book.put("state", state);
 
+        mDB.collection("user_books").document().set(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data saved");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
     }
 
     public void read(String uid) {
         // Get all books under this uid
         // return {ISBN, state}
-
-
+        Query query = mDB.collection("user_books").whereEqualTo("uid", uid);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                ArrayList<HashMap> data = new ArrayList<HashMap>();
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                        Log.d(TAG, "onComplete: " + documentSnapshot.getString("isbn"));
+                        HashMap<String, String> book = new HashMap<>();
+                        book.put("isbn", documentSnapshot.getString("isbn"));
+                        book.put("state", documentSnapshot.getString("state"));
+                        data.add(book);
+                    }
+                }
+                else {
+                    Log.d(TAG, "Data not found");
+                }
+            }
+        });
     }
 
 
