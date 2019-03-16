@@ -11,6 +11,8 @@ public class Book {
     private String description;
     private LatLng location;
     private String state;
+    private String requestState;
+    private String bookId;
 
     public Book(String _isbn, String _title, String _author, String _url, String _description, LatLng _location) {
         this.isbn = _isbn;
@@ -20,6 +22,8 @@ public class Book {
         this.description = _description;
         this.location = _location;
         this.state = "None";
+        this.requestState = "None";
+        this.bookId = "";
     }
     public String getIsbn() {
         return isbn;
@@ -55,5 +59,21 @@ public class Book {
 
     public String getState() {
         return state;
+    }
+
+    public void setRequestState(String requestState) {
+        this.requestState = requestState;
+    }
+
+    public String getRequestState() {
+        return requestState;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getBookId() {
+        return bookId;
     }
 }

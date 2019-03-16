@@ -29,9 +29,8 @@ public class RequestDialog extends DialogFragment {
     TextView detailsTextView;
     TextView authorTextView;
     ImageView imageView;
-    Button changeStateButton;
-    Button cancelButton;
-    EditText daysEdittext;
+    Button approveButton;
+    Button denyButton;
 
     @NonNull
     @Override
@@ -46,25 +45,35 @@ public class RequestDialog extends DialogFragment {
         authorTextView = view.findViewById(R.id.authorTextView);
         detailsTextView  = view.findViewById(R.id.descriptionTextView);
         imageView = view.findViewById(R.id.imageView);
-//        changeStateButton = view.findViewById(R.id.changeStateButton);
-        cancelButton = view.findViewById(R.id.cancelButton);
-//        daysEdittext = view.findViewById(R.id.daysEditText);
+        approveButton = view.findViewById(R.id.approveRequest);
+        denyButton = view.findViewById(R.id.denyRequest);
 
         titleTextView.setText(dialogBook.getBookTitle());
         detailsTextView.setText(dialogBook.getDescription());
 
         Picasso.get().load(dialogBook.getUrl()).into(imageView);
-//
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        approveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                approve();
+            }
+        });
+
+        denyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
             }
         });
 
-
         builder.setView(view);
         return builder.create();
+    }
+
+    public void approve() {
+        // db add state: lent
+        dialogBook.setState("lent");
+
     }
 }
