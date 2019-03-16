@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
 
     public int count;
     private int length;
+    private ArrayList<HashMap> mRequests = new ArrayList<>();
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -333,6 +334,43 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.d(TAG, "Data not saved");
+                            }
+                        });
+                    }
+                }
+                else {
+                    Log.d(TAG, "Data not found");
+                }
+            }
+        });
+    }
+
+    public void getRequests() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Query query = mDB.collection("user_books").whereEqualTo("uid", user.getUid());
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                        Log.d(TAG, documentSnapshot.getId());
+                        final String isbn = documentSnapshot.getString("isbn");
+                        Query query = mDB.collection("requests").whereEqualTo("bookId", documentSnapshot.getId());
+                        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                                        Log.d(TAG, documentSnapshot.getId());
+                                        HashMap<String, String> request = new HashMap<>();
+                                        request.put("isbn", isbn);
+                                        request.put("requester", documentSnapshot.getString("user_id"));
+                                        mRequests.add(request);
+                                    }
+                                }
+                                else {
+                                    Log.d(TAG, "Data not found");
+                                }
                             }
                         });
                     }
