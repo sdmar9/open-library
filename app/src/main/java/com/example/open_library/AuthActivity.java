@@ -25,8 +25,8 @@ public class AuthActivity extends AppCompatActivity {
         setTitle("Auth");
 
         mAuth = FirebaseAuth.getInstance();
-        //SignUp("ahmed.nadim59@gmail.com", "password", "nadim");
-        CurrentUser();
+        SignUp("ahmed.nadim59@gmail.com", "password", "nadim");
+        //CurrentUser();
         //SignIn("ahmed.nadim59@gmail.com", "password");
     }
 

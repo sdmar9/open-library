@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "820831935646",
-    "firebase_url": "https://open-library-717e4.firebaseio.com",
-    "project_id": "open-library-717e4",
-    "storage_bucket": "open-library-717e4.appspot.com"
+    "project_number": "516838870486",
+    "firebase_url": "https://open-library-c8f79.firebaseio.com",
+    "project_id": "open-library-c8f79",
+    "storage_bucket": "open-library-c8f79.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:820831935646:android:f2a83b53cfe73035",
+        "mobilesdk_app_id": "1:516838870486:android:f2a83b53cfe73035",
         "android_client_info": {
           "package_name": "com.example.open_library"
         }
       },
       "oauth_client": [
         {
-          "client_id": "820831935646-u69tof2uttbbrgkiebmrag7cq6el9h98.apps.googleusercontent.com",
+          "client_id": "516838870486-utqanh6r63a40p980mpnf7kj63emhorn.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAdN5ouxuhArt4RLPi5FMq1KLoWC3RycQI"
+          "current_key": "AIzaSyBlWZyqvtoZbFVGwpXvNhJRHzRiw1ASplI"
         }
       ],
       "services": {

@@ -31,8 +31,8 @@ public class DbActivity extends AppCompatActivity {
 
         setTitle("DB");
 
-        //SaveDataExample();
-        QueryDataExample();
+        SaveDataExample();
+        //QueryDataExample();
     }
 
     private void SaveDataExample() {
