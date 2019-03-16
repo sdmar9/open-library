@@ -34,7 +34,7 @@ public class AuthActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             Log.d(TAG, user.getDisplayName() + " logged in");
-            SignOut();
+            //SignOut();
         }
         else {
             Log.d(TAG, "No user logged in");
