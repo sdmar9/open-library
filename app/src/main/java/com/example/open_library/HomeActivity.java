@@ -1,6 +1,7 @@
 package com.example.open_library;
 
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -22,6 +23,15 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +44,8 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
 
     private TextView mTextMessage;
     public Book dialogBook;
+    private ArrayList<Book> books;
+    ArrayList<HashMap> dataRecieved;
 
     private HomeFragment homeFragment;
     private ShelfFragment shelfFragment;
@@ -42,6 +54,8 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
     private ProfileFragment profileFragment;
 
     public int count;
+    private int length;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -130,7 +144,11 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                         book.put("isbn", documentSnapshot.getString("isbn"));
                         book.put("state", documentSnapshot.getString("state"));
                         data.add(book);
+                        new GetBookDetailsIsbn().execute(documentSnapshot.getString("isbn"));
                     }
+//                    length = data.size();
+                    books = new ArrayList<>();
+//                    getBookInfo();
                 }
                 else {
                     Log.d(TAG, "Data not found");
@@ -226,4 +244,127 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         addBook(user.getUid(), isbn, "None");
     }
+
+//    public interface ReadCompleteListener {
+//        void onGetBooksk(ArrayList<Book> books);
+////        void onDialogNegativeClick(int num);
+//    }
+//
+//    // Use this instance of the interface to deliver action events
+//    ReadCompleteListener listener;
+
+
+
+    public class GetBookDetailsIsbn extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String JSONString = null;
+            String searchString = strings[0];
+            try {
+                // Create URL
+                URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=isbn:"+searchString);
+
+                // Create connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream inputStream = urlConnection.getInputStream();
+
+                // Read the response string into a StringBuilder.
+                StringBuilder builder = new StringBuilder();
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line + "\n");
+                }
+
+                if (builder.length() == 0) {
+                    return null;
+                }
+                JSONString = builder.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return JSONString;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            super.onPostExecute(s);
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                // Get the JSONArray of book items.
+                JSONArray itemsArray = jsonObject.getJSONArray("items");
+
+                // Initialize iterator and results fields.
+                int i = 0;
+                String isbn = null;
+                String title = null;
+                String authors = null;
+                String thumbnailUrl = null;
+                String description = null;
+
+                // Look for results in the items array, exiting when both the title and author
+                // are found or when all items have been checked.
+                while (i < 1 || (authors == null && title == null)) {
+                    // Get the current item information.
+                    JSONObject book = itemsArray.getJSONObject(i);
+                    JSONObject volumeInfo = book.getJSONObject("volumeInfo");
+                    JSONObject thumbnailInfo = volumeInfo.getJSONObject("imageLinks");
+
+                    // Try to get the author and title from the current item,
+                    // catch if either field is empty and move on.
+                    try {
+                        JSONArray isbnJSON = volumeInfo.getJSONArray("industryIdentifiers");
+                        JSONObject typeObject = isbnJSON.getJSONObject(0); // First key should be isbn 13
+                        if (typeObject.getString("type").equals("ISBN_10")) {
+                            try {typeObject = isbnJSON.getJSONObject(1);}
+                            catch (Exception e) {e.printStackTrace();}
+                        }
+
+                        isbn = typeObject.getString("identifier");
+                        title = volumeInfo.getString("title");
+
+                        JSONArray authorsJSON = volumeInfo.getJSONArray("authors");
+                        authors = authorsJSON.getString(0);
+
+                        thumbnailUrl = thumbnailInfo.getString("thumbnail");
+                        description = volumeInfo.getString("description");
+
+                        Book newBook = new Book(isbn,title,authors,thumbnailUrl,description,new LatLng(0,0));
+                        books.add(newBook);
+                        shelfFragment.adapter.books = books;
+                        shelfFragment.adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // Move to the next item.
+                    i++;
+                }
+                Log.d(TAG, "onPostExecute: Books" + books.size());
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
 }

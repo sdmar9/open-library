@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class ShelfFragment extends Fragment {
+
+    FragmentManager fm;
+
+    RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
+    RecyclerAdapter adapter;
 
     private Button addBookButton;
     private SearchAllFragment searchFragment;
@@ -50,6 +59,9 @@ public class ShelfFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        fm = getFragmentManager();
+        adapter = new RecyclerAdapter(getContext(), fm);
+
         searchFragment = new SearchAllFragment();
     }
 
@@ -60,6 +72,12 @@ public class ShelfFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_shelf, container, false);
         addBookButton = view.findViewById(R.id.addBookButton);
         Button getStuff = view.findViewById(R.id.getStuffButton);
+
+        recyclerView = view.findViewById(R.id.recyclerView);
+        layoutManager = new LinearLayoutManager(getContext());  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
+        recyclerView.setLayoutManager(layoutManager);   // Also StaggeredGridLayoutManager and GridLayoutManager or a custom Layout manager
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         getStuff.setOnClickListener(new View.OnClickListener() {
             @Override
