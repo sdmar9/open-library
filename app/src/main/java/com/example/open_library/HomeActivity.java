@@ -18,7 +18,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -105,7 +109,9 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 .addToBackStack("viewFragment")
                 .commit();
 
-        getClosestUsers();
+//        getClosestUsers();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        requestBook(user.getUid(), "E77jqepc8nmdUAXxh4Uo");
     }
 
 
@@ -171,6 +177,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                         for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
                             Log.d(TAG, "onComplete: " + documentSnapshot.getString("isbn"));
                             HashMap<String, String> book = new HashMap<>();
+                            book.put("id", documentSnapshot.getId());
                             book.put("isbn", documentSnapshot.getString("isbn"));
                             book.put("state", documentSnapshot.getString("state"));
                             books.add(book);
@@ -236,6 +243,74 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
             return true;
         }
         return false;
+    }
+
+    public void requestBook(String user_id, String bookId) {
+        Log.d(TAG, "requestBook: Called");
+        Map<String, Object> book = new HashMap<>();
+        book.put("state", "requested");
+
+        mDB.collection("user_books").document(bookId).update(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data saved");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("bookId", bookId);
+        request.put("user_id", user_id);
+
+        mDB.collection("requests").document().set(request).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data saved");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
+    }
+
+    public void shareBook(String bookId) {
+        Map<String, Object> book = new HashMap<>();
+        book.put("state", "open-to-share");
+
+        mDB.collection("user_books").document(bookId).update(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data saved");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
+
+        mDB.collection("request")
+                .whereEqualTo("bookId", bookId)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        for (QueryDocumentSnapshot doc : value) {
+                            Log.d(TAG, "onEvent: " + doc.getString("user_id"));
+                        }
+                    }
+                });
     }
 
     @Override
