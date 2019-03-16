@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.open_library.Adapters.PileAdapter;
+import com.example.open_library.Adapters.RequestsAdapter;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -54,7 +55,7 @@ public class RequestFragment extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    PileAdapter adapter;
+    RequestsAdapter adapter;
     int count = 0;
 
     private EditText searchTextBox;
@@ -92,7 +93,7 @@ public class RequestFragment extends Fragment {
         }
 
         fm = getFragmentManager();
-        adapter = new PileAdapter(getContext(), fm);
+        adapter = new RequestsAdapter(getContext(), fm);
     }
 
     @Override

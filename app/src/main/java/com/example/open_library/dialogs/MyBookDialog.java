@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -54,10 +55,14 @@ public class MyBookDialog extends DialogFragment {
 
         titleTextView.setText(dialogBook.getBookTitle());
         detailsTextView.setText(dialogBook.getDescription());
-        Picasso.get().load(dialogBook.getUrl()).into(imageView);
 
+        Picasso.get().load(dialogBook.getUrl()).into(imageView);
+//        Log.d("TAG", dialogBook.)
         if (dialogBook.getState().equals("None")) {
             daysEdittext.setAlpha(0f);
+            changeStateButton.setText("Private");
+        } else {
+            changeStateButton.setText("Available");
         }
 
         daysEdittext.addTextChangedListener(new TextWatcher() {

@@ -100,4 +100,6 @@ public class ShelfFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         ((HomeActivity)getActivity()).read(user.getUid());
     }
+
+
 }

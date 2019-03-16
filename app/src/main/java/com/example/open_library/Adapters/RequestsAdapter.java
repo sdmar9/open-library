@@ -16,21 +16,21 @@ import android.widget.TextView;
 import com.example.open_library.Book;
 import com.example.open_library.HomeActivity;
 import com.example.open_library.R;
-import com.example.open_library.dialogs.BookDialogFragment;
 import com.example.open_library.dialogs.MyBookDialog;
+import com.example.open_library.dialogs.RequestDialog;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ShelfAdapter extends RecyclerView.Adapter<ShelfAdapter.ViewHolder> {
+public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.ViewHolder> {
 
     private FragmentManager fragmentManager;
     private Context context;
 
     public ArrayList<Book> books = new ArrayList<>();
 
-    public ShelfAdapter(Context _context, FragmentManager _fragmentManager) {
+    public RequestsAdapter(Context _context, FragmentManager _fragmentManager) {
         this.context = _context;
         this.fragmentManager = _fragmentManager;
     }
@@ -65,8 +65,7 @@ public class ShelfAdapter extends RecyclerView.Adapter<ShelfAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book1.getIsbn(), book1.getBookTitle(), book1.getAuthor(), book1.getUrl(), book1.getDescription(), new LatLng(-37.814,144.96332));
-                    ((HomeActivity)context).dialogBook.setState(book1.getState());
-                    MyBookDialog dialog = new MyBookDialog();
+                    RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });
@@ -85,8 +84,7 @@ public class ShelfAdapter extends RecyclerView.Adapter<ShelfAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book2.getIsbn(), book2.getBookTitle(), book2.getAuthor(), book2.getUrl(), book2.getDescription(), new LatLng(-37.814,144.96332));
-                    ((HomeActivity)context).dialogBook.setState(book2.getState());
-                    MyBookDialog dialog = new MyBookDialog();
+                    RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });
@@ -105,8 +103,7 @@ public class ShelfAdapter extends RecyclerView.Adapter<ShelfAdapter.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book3.getIsbn(), book3.getBookTitle(), book3.getAuthor(), book3.getUrl(), book3.getDescription(), new LatLng(-37.814,144.96332));
-                    ((HomeActivity)context).dialogBook.setState(book3.getState());
-                    MyBookDialog dialog = new MyBookDialog();
+                    RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });
