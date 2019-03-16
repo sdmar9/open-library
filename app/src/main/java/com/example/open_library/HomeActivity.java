@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -36,6 +38,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
     public int count;
     private int length;
     private ArrayList<HashMap> mRequests = new ArrayList<>();
-
+    private ArrayList<HashMap> mBooks;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -167,7 +171,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
     }
 
     public void getClosestBooks(ArrayList<String> user_ids) {
-        final ArrayList<HashMap> books = new ArrayList<>();
+        mBooks = new ArrayList<>();
         final int size = user_ids.size();
         count = 0;
         for (String user_id: user_ids) {
@@ -183,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                             book.put("id", documentSnapshot.getId());
                             book.put("isbn", documentSnapshot.getString("isbn"));
                             book.put("state", documentSnapshot.getString("state"));
-                            books.add(book);
+                            mBooks.add(book);
                         }
                         if (count == (size-1)) {
                             Log.d(TAG, "onComplete: Done");
@@ -343,6 +347,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                     for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
                         Log.d(TAG, documentSnapshot.getId());
                         final String isbn = documentSnapshot.getString("isbn");
+                        final String bookId = documentSnapshot.getString("bookId");
                         Query query = mDB.collection("requests").whereEqualTo("bookId", documentSnapshot.getId());
                         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -351,6 +356,8 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                                     for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
                                         Log.d(TAG, documentSnapshot.getId());
                                         HashMap<String, String> request = new HashMap<>();
+                                        request.put("id", documentSnapshot.getId());
+                                        request.put("bookId", bookId);
                                         request.put("isbn", isbn);
                                         request.put("requester", documentSnapshot.getString("user_id"));
                                         mRequests.add(request);
@@ -366,6 +373,57 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 else {
                     Log.d(TAG, "Data not found");
                 }
+            }
+        });
+    }
+
+    public void approveRequest(String requestId) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("approved", true);
+
+        mDB.collection("tests").document(requestId).update(request).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data saved");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
+    }
+
+    public void lendBook(String bookId, String lenderUid, String borrowerUid) {
+        final Map<String, Object> loan = new HashMap<>();
+        loan.put("bookId", bookId);
+        loan.put("lenderUid", lenderUid);
+        loan.put("borrowerUid", borrowerUid);
+        Date currentTime = Calendar.getInstance().getTime();
+        loan.put("startDate", currentTime);
+        DocumentReference docRef = mDB.collection("user_books").document(bookId);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.d(TAG, "onSuccess: got book data");
+                Date dt = new Date();
+                Calendar c = Calendar.getInstance();
+                c.setTime(dt);
+                c.add(Calendar.DATE, Integer.valueOf(documentSnapshot.getString("deadline")));
+                dt = c.getTime();
+                loan.put("endDate", dt);
+
+                mDB.collection("loans").document().set(loan).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Data saved");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Data not saved");
+                    }
+                });
             }
         });
     }
