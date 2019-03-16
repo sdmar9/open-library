@@ -149,7 +149,7 @@ public class RequestFragment extends Fragment {
                                         request.put("isbn", isbn);
                                         request.put("requester", documentSnapshot.getString("user_id"));
                                         //mRequests.add(request);
-                                        new GetBookDetailsIsbn().execute(isbn);
+                                        new GetBookDetailsIsbn().execute(isbn, documentSnapshot.getId());
                                     }
                                 }
                                 else {
@@ -166,13 +166,16 @@ public class RequestFragment extends Fragment {
         });
     }
 
-    public class GetBookDetailsIsbn extends AsyncTask<String, String, String> {
+    public class GetBookDetailsIsbn extends AsyncTask<String, String, ArrayList<String>> {
         @Override
-        protected String doInBackground(String... strings) {
+        protected ArrayList<String> doInBackground(String... strings) {
+            ArrayList<String> returnStrings = new ArrayList<>();
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String JSONString = null;
             String searchString = strings[0];
+            String state = strings[1];
+            returnStrings.add(state);
             try {
                 // Create URL
                 URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=isbn:"+searchString);
@@ -212,14 +215,15 @@ public class RequestFragment extends Fragment {
                     }
                 }
             }
-            return JSONString;
+            returnStrings.add(JSONString);
+            return returnStrings;
         }
 
         @Override
-        protected void onPostExecute(String s) {
-
-            super.onPostExecute(s);
+        protected void onPostExecute(ArrayList<String> strings) {
+            super.onPostExecute(strings);
             try {
+                String s = strings.get(1);
                 JSONObject jsonObject = new JSONObject(s);
                 // Get the JSONArray of book items.
                 JSONArray itemsArray = jsonObject.getJSONArray("items");
@@ -261,6 +265,7 @@ public class RequestFragment extends Fragment {
 
                         Book newBook = new Book(isbn,title,authors,thumbnailUrl,description,new LatLng(0,0));
                         if (!isInBooks(newBook)) {
+                            newBook.setState(strings.get(0));
                             books.add(newBook);
                             adapter.books = books;
                             adapter.notifyDataSetChanged();
