@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -12,36 +15,55 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
-public class AuthActivity extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
 
     private final String TAG = "AUTH_DEBUG";
     private FirebaseAuth mAuth;
 
+    private Button signInButton;
+    private Button signUpButton;
+    private EditText emailEditExt;
+    private EditText passwordEdit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
+        setContentView(R.layout.activity_sign_in);
 
         setTitle("Auth");
 
+        signInButton = findViewById(R.id.loginButton);
+        signUpButton = findViewById(R.id.signUpButton);
+        emailEditExt = findViewById(R.id.emailEditText);
+        passwordEdit = findViewById(R.id.passwordEditText);
+
         mAuth = FirebaseAuth.getInstance();
-        SignUp("ahmed.nadim59@gmail.com", "password", "nadim");
-        //CurrentUser();
-        //SignIn("ahmed.nadim59@gmail.com", "password");
+
+        signOut();
     }
 
-    private void CurrentUser() {
+
+
+    public void onSignIn(View view) {
+        String email = emailEditExt.getText().toString();
+        String password = passwordEdit.getText().toString();
+        signIn(email, password);
+    }
+
+
+
+    private void currentUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             Log.d(TAG, user.getDisplayName() + " logged in");
-            //SignOut();
+            //signOut();
         }
         else {
             Log.d(TAG, "No user logged in");
         }
     }
 
-    private void SignUp(String email, String password, final String displayName) {
+    private void signUp(String email, String password, final String displayName) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -64,7 +86,7 @@ public class AuthActivity extends AppCompatActivity {
                 });
     }
 
-    private void SignIn(String email, String password) {
+    private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -80,7 +102,7 @@ public class AuthActivity extends AppCompatActivity {
                 });
     }
 
-    private void SignOut() {
+    private void signOut() {
         FirebaseAuth.getInstance().signOut();
         Log.d(TAG, "Signed out");
     }
