@@ -1,5 +1,6 @@
 package com.example.open_library;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
     private RequestFragment requestFragment;
     private ProfileFragment profileFragment;
 
+    public int count;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,6 +90,8 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 .add(R.id.base_frame, homeFragment, "homeFragment")
                 .addToBackStack("viewFragment")
                 .commit();
+
+        getClosestUsers();
     }
 
 
@@ -133,6 +137,87 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                 }
             }
         });
+    }
+
+    public void getClosestBooks(ArrayList<String> user_ids) {
+        final ArrayList<HashMap> books = new ArrayList<>();
+        final int size = user_ids.size();
+        count = 0;
+        for (String user_id: user_ids) {
+            Log.d(TAG, "getClosestBooks: " + user_id);
+            Query query = mDB.collection("user_books").whereEqualTo("uid", user_id);
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                            Log.d(TAG, "onComplete: " + documentSnapshot.getString("isbn"));
+                            HashMap<String, String> book = new HashMap<>();
+                            book.put("isbn", documentSnapshot.getString("isbn"));
+                            book.put("state", documentSnapshot.getString("state"));
+                            books.add(book);
+                        }
+                        if (count == (size-1)) {
+                            Log.d(TAG, "onComplete: Done");
+                        }
+                    }
+                    else {
+                        Log.d(TAG, "Data not found");
+                    }
+                }
+            });
+            count++;
+        }
+    }
+
+    public void getClosestUsers() {
+        Query query = mDB.collection("users_data");
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Log.d(TAG, "onComplete: READ DATA");
+                ArrayList<String> user_ids = new ArrayList<String>();
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                        Log.d(TAG, "onComplete: " + documentSnapshot.getString("user_id"));
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if (!documentSnapshot.getString("user_id").equals(user.getUid())) {
+                            if (isUserNearby(
+                                    Double.valueOf(documentSnapshot.getString("latitude")),
+                                    Double.valueOf(documentSnapshot.getString("longitude")),
+                                    5000)) {
+                                user_ids.add(documentSnapshot.getString("user_id"));
+                                Log.d(TAG, "onComplete: " + documentSnapshot.getString("user_id"));
+                                getClosestBooks(user_ids);
+                            }
+                        }
+                    }
+                }
+                else {
+                    Log.d(TAG, "Data not found");
+                }
+            }
+        });
+    }
+
+    public boolean isUserNearby (double lat, double lng, int radius) {
+        double userLat = -37.809665; double userLng = 144.9676664;
+
+        Location currLocation = new Location("Current");
+        currLocation.setLatitude(userLat);                          // Set by User during account setup
+        currLocation.setLongitude(userLng);
+
+        Location bookLocation = new Location("BookLocation");
+        bookLocation.setLatitude(lat);
+        bookLocation.setLongitude(lng);
+
+        float distance = currLocation.distanceTo(bookLocation);     // distance in meters
+        Log.d(TAG,String.valueOf(distance));
+
+        if (currLocation.distanceTo(bookLocation) < radius) {
+            return true;
+        }
+        return false;
     }
 
     @Override

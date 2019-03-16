@@ -47,8 +47,13 @@ public class SignInActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        BookDetailsDialog dialog = new BookDetailsDialog(this);
-        dialog.show();
+        //BookDetailsDialog dialog = new BookDetailsDialog(this);
+        //dialog.show();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+        }
 
     }
 
