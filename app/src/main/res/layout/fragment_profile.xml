@@ -95,5 +95,6 @@
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contactInfoField" />
+
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

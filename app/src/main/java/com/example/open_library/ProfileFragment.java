@@ -14,9 +14,12 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 
 public class ProfileFragment extends Fragment {
@@ -72,10 +75,13 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
         profilePic = view.findViewById(R.id.profilePic);
         Picasso.get().load("https://i1.rgstatic.net/ii/profile.image/280055327543301-1443781801998_Q512/Md_Ahmed15.jpg")
                 .resize(300, 300)
+                .transform(new CropCircleTransformation())
                 .into(profilePic);
+
         screenNameView = view.findViewById(R.id.screenNameView);
         emailView = view.findViewById(R.id.emailView);
         contactInfoView = view.findViewById(R.id.contactInfoView);
