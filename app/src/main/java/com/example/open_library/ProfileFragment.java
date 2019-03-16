@@ -7,6 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 
 public class ProfileFragment extends Fragment {
@@ -19,19 +25,20 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private FirebaseAuth mAuth;
+    private ImageView profilePic;
+    private TextView screenNameView;
+    private TextView emailView;
+    private TextView contactInfoView;
+
+    private String screenName;
+    private String email;
+    private String contactInfo;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -48,13 +55,31 @@ public class ProfileFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        screenName = user.getDisplayName();
+        email = user.getEmail();
+        contactInfo = user.getPhoneNumber();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        profilePic = view.findViewById(R.id.profilePic);
+        Picasso.get().load("https://i1.rgstatic.net/ii/profile.image/280055327543301-1443781801998_Q512/Md_Ahmed15.jpg")
+                .resize(300, 300)
+                .into(profilePic);
+        screenNameView = view.findViewById(R.id.screenNameView);
+        emailView = view.findViewById(R.id.emailView);
+        contactInfoView = view.findViewById(R.id.contactInfoView);
 
+        screenNameView.setText(screenName);
+        emailView.setText(email);
+        contactInfoView.setText(contactInfo);
+
+        return view;
+    }
 }

@@ -96,6 +96,4 @@ public class ShelfFragment extends Fragment {
 
         return view;
     }
-
-
 }
