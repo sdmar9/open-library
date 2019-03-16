@@ -571,4 +571,21 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         return false;
     }
 
+    public void changeRequestState(String requestId, String state) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("state", state);
+
+        mDB.collection("requests").document(requestId).update(request).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Data updated");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Data not saved");
+            }
+        });
+    }
+
 }
