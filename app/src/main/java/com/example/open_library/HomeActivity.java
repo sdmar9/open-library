@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
 
 //        getClosestUsers();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        requestBook(user.getUid(), "E77jqepc8nmdUAXxh4Uo");
+//        requestBook(user.getUid(), "7LzdkOLX3zeKuzNi4uwt");
     }
 
 
@@ -311,6 +311,37 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                         }
                     }
                 });
+    }
+
+    public void changeState(String isbn, String user_id, final String state) {
+        Query query = mDB.collection("user_books").whereEqualTo("isbn", isbn).whereEqualTo("user_id", user_id);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot: task.getResult()) {
+                        Log.d(TAG, documentSnapshot.getId());
+                        Map<String, Object> book = new HashMap<>();
+                        book.put("state", state);
+
+                        mDB.collection("user_books").document(documentSnapshot.getId()).update(book).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Data saved");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Data not saved");
+                            }
+                        });
+                    }
+                }
+                else {
+                    Log.d(TAG, "Data not found");
+                }
+            }
+        });
     }
 
     @Override
