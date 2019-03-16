@@ -45,7 +45,7 @@ public class SignInActivity extends AppCompatActivity {
         passwordEdit = findViewById(R.id.passwordEditText);
 
         mAuth = FirebaseAuth.getInstance();
-        signOut();
+
     }
 
     public void onSignIn(View view) {
@@ -53,6 +53,7 @@ public class SignInActivity extends AppCompatActivity {
         String password = passwordEdit.getText().toString();
         signIn(email, password);
     }
+
 
     public void goToSignUpIntent(View view) {
         Intent intent = new Intent(this, SignUpActivity.class);
@@ -114,3 +115,6 @@ public class SignInActivity extends AppCompatActivity {
         Log.d(TAG, "Signed out");
     }
 }
+
+
+// ahmed.nadim59@gmail.com
