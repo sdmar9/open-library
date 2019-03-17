@@ -12,7 +12,7 @@
 
         <ImageView
             android:id="@+id/recBack"
-            android:layout_width="375dp"
+            android:layout_width="345dp"
             android:layout_height="76dp"
             app:layout_constraintBottom_toTopOf="@+id/recBack2"
             app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,7 @@
 
         <ImageView
             android:id="@+id/recBack2"
-            android:layout_width="375dp"
+            android:layout_width="345dp"
             android:layout_height="76dp"
             app:layout_constraintBottom_toTopOf="@+id/recBack3"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
 
         <ImageView
             android:id="@+id/recBack3"
-            android:layout_width="375dp"
+            android:layout_width="345dp"
             android:layout_height="76dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="#Ffffff"
             android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="@+id/recBack"
             app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="#ffffff"
             android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="@+id/recBack2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,6 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
+            android:textColor="#ffffff"
             android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="@+id/recBack3"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,6 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="books in your area"
+            android:textColor="#ffffff"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/booksArea" />
 
@@ -91,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="books being lent"
+            android:textColor="#ffffff"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/booksShelf" />
 
@@ -100,6 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="requests for books"
+            android:textColor="#ffffff"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/booksRequests" />
 
