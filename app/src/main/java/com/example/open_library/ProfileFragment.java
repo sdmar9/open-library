@@ -37,10 +37,13 @@ public class ProfileFragment extends Fragment {
     private TextView screenNameView;
     private TextView emailView;
     private TextView contactInfoView;
+    private Button signOutButton;
 
     private String screenName;
     private String email;
     private String contactInfo;
+
+
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -85,10 +88,19 @@ public class ProfileFragment extends Fragment {
         screenNameView = view.findViewById(R.id.screenNameView);
         emailView = view.findViewById(R.id.emailView);
         contactInfoView = view.findViewById(R.id.contactInfoView);
-
+        signOutButton = view.findViewById(R.id.logOutButton);
         screenNameView.setText(screenName);
         emailView.setText(email);
         contactInfoView.setText(contactInfo);
+
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

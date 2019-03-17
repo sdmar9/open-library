@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.open_library.dialogs.BookDialogFragment;
+import com.example.open_library.dialogs.RequestDialog;
+import com.example.open_library.dialogs.ViewBookDialog;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class HomeActivity extends AppCompatActivity implements BookDialogFragment.NoticeDialogListener {
+public class HomeActivity extends AppCompatActivity implements BookDialogFragment.NoticeDialogListener, ViewBookDialog.RequestBookDialogListener, RequestDialog.MyApproveListener {
 
     private final String TAG = "HOME_ACTIVITY_DEBUG";
     private FirebaseFirestore mDB = FirebaseFirestore.getInstance();
@@ -157,6 +159,7 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
                         HashMap<String, String> book = new HashMap<>();
                         book.put("isbn", documentSnapshot.getString("isbn"));
                         book.put("state", documentSnapshot.getString("state"));
+                        book.put("id", documentSnapshot.getId());
                         data.add(book);
                         new GetBookDetailsIsbn().execute(documentSnapshot.getString("isbn"), documentSnapshot.getString("state"));
                     }
@@ -379,10 +382,11 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
     }
 
     public void approveRequest(String requestId) {
+        Log.d(TAG, "approveRequest: " + requestId);
         Map<String, Object> request = new HashMap<>();
         request.put("approved", true);
 
-        mDB.collection("tests").document(requestId).update(request).addOnSuccessListener(new OnSuccessListener<Void>() {
+        mDB.collection("requests").document(requestId).update(request).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Data saved");
@@ -589,4 +593,13 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
         });
     }
 
+    @Override
+    public void onRequestClick(String uid, String bookId) {
+        requestBook(uid, bookId);
+    }
+
+    @Override
+    public void onApprove(String rId) {
+        approveRequest(rId);
+    }
 }

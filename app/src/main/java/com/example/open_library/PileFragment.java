@@ -120,6 +120,7 @@ public class PileFragment extends Fragment {
         goButton = view.findViewById(R.id.searchButton);
         searchTextBox = view.findViewById(R.id.searchEditText);
 
+        getClosestUsers();
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +151,7 @@ public class PileFragment extends Fragment {
                             book.put("id", documentSnapshot.getId());
                             book.put("isbn", documentSnapshot.getString("isbn"));
                             book.put("state", documentSnapshot.getString("state"));
-                            new GetBookDetailsIsbn().execute(documentSnapshot.getString("isbn"));
+                            new GetBookDetailsIsbn().execute(documentSnapshot.getString("isbn"), documentSnapshot.getId());
                         }
                         if (count == (size-1)) {
                             Log.d(LOG_TAG, "onComplete: Done");
@@ -226,13 +227,16 @@ public class PileFragment extends Fragment {
         return false;
     }
 
-    public class GetBookDetailsIsbn extends AsyncTask<String, String, String> {
+    public class GetBookDetailsIsbn extends AsyncTask<String, String, ArrayList<String>> {
         @Override
-        protected String doInBackground(String... strings) {
+        protected ArrayList<String> doInBackground(String... strings) {
+            ArrayList<String> returnStrings = new ArrayList<>();
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String JSONString = null;
             String searchString = strings[0];
+            String bookID = strings[1];
+            returnStrings.add(bookID);
             try {
                 // Create URL
                 URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=isbn:"+searchString);
@@ -272,13 +276,16 @@ public class PileFragment extends Fragment {
                     }
                 }
             }
-            return JSONString;
+            returnStrings.add(JSONString);
+            return returnStrings;
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(ArrayList<String> strings) {
 
-            super.onPostExecute(s);
+
+            super.onPostExecute(strings);
+            String s = strings.get(1);
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 // Get the JSONArray of book items.
@@ -321,6 +328,7 @@ public class PileFragment extends Fragment {
 
                         Book newBook = new Book(isbn,title,authors,thumbnailUrl,description,new LatLng(0,0));
                         if (!isInBooks(newBook)) {
+                            newBook.setBookId(strings.get(0));
                             books.add(newBook);
                             adapter.books = books;
                             adapter.notifyDataSetChanged();

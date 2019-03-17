@@ -109,12 +109,13 @@ public class RequestFragment extends Fragment {
         goButton = view.findViewById(R.id.searchButton);
         searchTextBox = view.findViewById(R.id.searchEditText);
 
+        getRequests();
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchString = searchTextBox.getText().toString();
                 //new GetBookDetails().execute(searchString);
-                getRequests();
+
                 Log.d("", "onClick: ");
             }
         });

@@ -65,6 +65,8 @@ public class MyBookDialog extends DialogFragment {
             changeStateButton.setText("Available");
         }
 
+
+
         daysEdittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

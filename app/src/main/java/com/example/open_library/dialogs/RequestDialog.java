@@ -2,6 +2,7 @@ package com.example.open_library.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,6 +60,7 @@ public class RequestDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 approve();
+                listener.onApprove(dialogBook.getRequestState());
             }
         });
 
@@ -84,5 +86,30 @@ public class RequestDialog extends DialogFragment {
         // db add state: lent
         dialogBook.setState("lent");
 
+
+    }
+
+
+        public interface MyApproveListener {
+        void onApprove(String rId);
+
+    }
+
+    // Use this instance of the interface to deliver action events
+    MyApproveListener listener;
+
+    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            listener = (MyApproveListener) context;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement NoticeDialogListener");
+        }
     }
 }

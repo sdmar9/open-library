@@ -17,6 +17,7 @@ import com.example.open_library.Book;
 import com.example.open_library.HomeActivity;
 import com.example.open_library.R;
 import com.example.open_library.dialogs.MyBookDialog;
+import com.example.open_library.dialogs.ViewBookDialog;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
@@ -64,7 +65,8 @@ public class PileAdapter extends RecyclerView.Adapter<PileAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book1.getIsbn(), book1.getBookTitle(), book1.getAuthor(), book1.getUrl(), book1.getDescription(), new LatLng(-37.814,144.96332));
-                    MyBookDialog dialog = new MyBookDialog();
+                    ((HomeActivity)context).dialogBook.setBookId(book1.getBookId());
+                    ViewBookDialog dialog = new ViewBookDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });
@@ -83,7 +85,8 @@ public class PileAdapter extends RecyclerView.Adapter<PileAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book2.getIsbn(), book2.getBookTitle(), book2.getAuthor(), book2.getUrl(), book2.getDescription(), new LatLng(-37.814,144.96332));
-                    MyBookDialog dialog = new MyBookDialog();
+                    ((HomeActivity)context).dialogBook.setBookId(book2.getBookId());
+                    ViewBookDialog dialog = new ViewBookDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });
@@ -102,7 +105,8 @@ public class PileAdapter extends RecyclerView.Adapter<PileAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book3.getIsbn(), book3.getBookTitle(), book3.getAuthor(), book3.getUrl(), book3.getDescription(), new LatLng(-37.814,144.96332));
-                    MyBookDialog dialog = new MyBookDialog();
+                    ((HomeActivity)context).dialogBook.setBookId(book3.getBookId());
+                    ViewBookDialog dialog = new ViewBookDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
             });

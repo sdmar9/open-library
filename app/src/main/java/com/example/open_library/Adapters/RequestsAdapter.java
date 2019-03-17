@@ -65,6 +65,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book1.getIsbn(), book1.getBookTitle(), book1.getAuthor(), book1.getUrl(), book1.getDescription(), new LatLng(-37.814,144.96332));
+                    ((HomeActivity)context).dialogBook.setRequestState(book1.getRequestState());
                     RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
@@ -84,6 +85,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book2.getIsbn(), book2.getBookTitle(), book2.getAuthor(), book2.getUrl(), book2.getDescription(), new LatLng(-37.814,144.96332));
+                    ((HomeActivity)context).dialogBook.setRequestState(book2.getRequestState());
                     RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }
@@ -103,6 +105,7 @@ public class RequestsAdapter extends RecyclerView.Adapter<RequestsAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     ((HomeActivity)context).dialogBook = new Book(book3.getIsbn(), book3.getBookTitle(), book3.getAuthor(), book3.getUrl(), book3.getDescription(), new LatLng(-37.814,144.96332));
+                    ((HomeActivity)context).dialogBook.setRequestState(book3.getRequestState());
                     RequestDialog dialog = new RequestDialog();
                     dialog.show(fragmentManager, "book_dialog");
                 }

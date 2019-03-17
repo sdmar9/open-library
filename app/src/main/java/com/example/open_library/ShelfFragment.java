@@ -72,7 +72,6 @@ public class ShelfFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_shelf, container, false);
         addBookButton = view.findViewById(R.id.addBookButton);
-        Button getStuff = view.findViewById(R.id.getStuffButton);
 
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getContext());  //A RecyclerView.LayoutManager implementation which provides similar functionality to ListView.
