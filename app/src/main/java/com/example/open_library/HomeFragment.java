@@ -1,10 +1,12 @@
 package com.example.open_library;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -19,19 +21,14 @@ public class HomeFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    TextView bookRequestView;
+    TextView booksView;
+    TextView lentView;
+
     public HomeFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -54,6 +51,14 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        bookRequestView = v.findViewById(R.id.booksArea);
+        booksView = v.findViewById(R.id.booksShelf);
+        lentView = v.findViewById(R.id.booksRequests);
+
+        bookRequestView.setText("3");
+        booksView.setText("23");
+        lentView.setText("6");
+        return v;
     }
 }

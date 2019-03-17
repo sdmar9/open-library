@@ -63,8 +63,9 @@ public class HomeActivity extends AppCompatActivity implements BookDialogFragmen
 
     public int count;
     private int length;
-    private ArrayList<HashMap> mRequests = new ArrayList<>();
-    private ArrayList<HashMap> mBooks;
+    public ArrayList<HashMap> mRequests = new ArrayList<>();
+    public ArrayList<HashMap> mBooks;
+    public int mLent = 0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

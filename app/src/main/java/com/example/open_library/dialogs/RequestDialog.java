@@ -31,6 +31,7 @@ public class RequestDialog extends DialogFragment {
     ImageView imageView;
     Button approveButton;
     Button denyButton;
+    Button cancelButton;
 
     @NonNull
     @Override
@@ -47,6 +48,7 @@ public class RequestDialog extends DialogFragment {
         imageView = view.findViewById(R.id.imageView);
         approveButton = view.findViewById(R.id.approveRequest);
         denyButton = view.findViewById(R.id.denyRequest);
+        cancelButton = view.findViewById(R.id.cancelButtonRequest);
 
         titleTextView.setText(dialogBook.getBookTitle());
         detailsTextView.setText(dialogBook.getDescription());
@@ -61,6 +63,13 @@ public class RequestDialog extends DialogFragment {
         });
 
         denyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
