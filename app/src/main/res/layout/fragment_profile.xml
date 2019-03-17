@@ -12,19 +12,27 @@
         android:backgroundTint="@android:color/holo_purple">
 
         <ImageView
+            android:id="@+id/backRec"
+            android:layout_width="177dp"
+            android:layout_height="154dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/rounded_rec"
+            app:layout_constraintBottom_toTopOf="@+id/contactInfoField"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.929" />
+
+        <ImageView
             android:id="@+id/profilePic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/backRec"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.161"
+            tools:layout_editor_absoluteY="32dp"
             tools:src="@tools:sample/avatars" />
 
         <TextView
@@ -39,7 +47,7 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.62"
             app:layout_constraintStart_toEndOf="@+id/profilePic"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.031" />
@@ -48,7 +56,8 @@
             android:id="@+id/screenNameView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="88dp"
+            android:layout_marginTop="8dp"
             android:text="TextView"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/profilePic"
@@ -58,8 +67,7 @@
             android:id="@+id/emailField"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="88dp"
             android:text="E-Mail:"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/profilePic"
@@ -69,7 +77,8 @@
             android:id="@+id/emailView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="88dp"
+            android:layout_marginTop="4dp"
             android:text="TextView"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/profilePic"
