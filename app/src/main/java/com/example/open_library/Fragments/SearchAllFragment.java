@@ -104,7 +104,7 @@ public class SearchAllFragment extends Fragment  {
         goButton = view.findViewById(R.id.goButton);
         searchTextBox = view.findViewById(R.id.searchEditText);
 
-        searchTextBox.setText("Search for a new book to add...");
+        searchTextBox.setHint("Search for a new book to add...");
         goButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
